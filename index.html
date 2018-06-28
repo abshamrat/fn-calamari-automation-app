@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Fieldnation.Calamari</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .radius-zero{
+      border-radius: 0px !important;
+    }
+    #user-email{
+      width: 100%;
+      color: #00A485;
+      font-size:16px;
+      padding: 6px;
+    }
+    #btn-save{
+      padding: 6px;
+      background: #00A485;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+      color: rgb(76, 116, 108);
+      opacity: 1; /* Firefox */
+    }
+
+    :-ms-input-placeholder { /* Internet Explorer 10-11 */
+        color: rgb(76, 116, 108);
+    }
+
+    ::-ms-input-placeholder { /* Microsoft Edge */
+        color: rgb(76, 116, 108);
+    }
+    #minimize-window {
+      margin-top: 10px;
+      color: rgb(211, 138, 86)
+    }
+    #minimize-window:hover{
+      cursor: pointer;
+    }
+  </style>
+  
+</head>
+
+<body>
+  <div class="container">
+      <i class="fa fa-minus" id="minimize-window" onclick="minimizeWindow()"></i>
+  </div>
+  <div class="container text-center" style="-webkit-app-region: drag">
+    <img src="static/calamari_icon.png" alt="Calamari logo" width="200" style="margin-top: 50px">
+  </div>
+  <div style="width:80%;margin-left: 10%;margin-top: 50px;">
+    <input id="user-email" type="email" required class="form-group radius-zero" placeholder="Username">
+    <button id="btn-save" onclick="saveUser()" class="btn btn-success btn-block radius-zero">SAVE & CLOSE</button>
+  </div>
+  <script>
+    'use strict'
+    const fs = require('fs');
+    const path = require('path');
+    const electron = require('electron');
+    const remote = electron.remote;
+    const app = electron.app;
+    function saveUser() {
+      let userEmail = document.getElementById('user-email').value;
+      if(!validateEmail(userEmail))
+      {
+        alert("Please enter valid email address");
+        return;
+      }else if(userEmail != ''){
+        fs.readFile(path.join(__dirname, 'preference.json'), 'utf8', function (err, data) {
+          if (err) throw err;
+          let obj = JSON.parse(data);
+          obj.useremail = userEmail;
+          fs.writeFile(path.join(__dirname, 'preference.json'),JSON.stringify(obj), function (err) {
+            if (err) throw err;
+            remote.BrowserWindow.getFocusedWindow().hide();
+          });
+        
+        });
+      }
+    }
+    function minimizeWindow() {
+      remote.BrowserWindow.getFocusedWindow().minimize();
+    }
+    function validateEmail(email) {
+      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(email).toLowerCase());
+    }
+    function readEmail()
+    {
+      fs.readFile(path.join(__dirname, 'preference.json'), 'utf8', function (err, data) {
+        if (err) throw err;
+        let obj = JSON.parse(data);
+        document.getElementById('user-email').value = obj.useremail;       
+      });
+    }
+    readEmail();
+  </script>
+
+</body>
+</html>

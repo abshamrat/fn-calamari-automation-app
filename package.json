@@ -1,0 +1,36 @@
+{
+  "name": "fn-calamari-app",
+  "version": "1.2.2",
+  "description": "A calamari automation app",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . fn-calamari-app",
+    "build-linux32": "electron-packager . fn-calamari-app --platform=linux  --arch=ia32",
+    "build-linux64": "electron-packager . fn-calamari-app --platform=linux  --arch=x64 --no-prune",
+    "build-mac": "electron-packager . fn-calamari-app --platform=darwin  --arch=x64",
+    "build-win32": "electron-packager . fn-calamari-app --platform=win32  --arch=ia32",
+    "build-win64": "electron-packager . fn-calamari-app --platform=win32  --arch=x64"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "abu.bakar.siddique@fieldnation.com",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "devDependencies": {
+    "electron": "latest",
+    "electron-builder": "^20.15.1",
+    "electron-installer-debian": "^0.8.1",
+    "electron-packager": "^8.5.2"
+  },
+  "dependencies": {
+    "auto-launch": "^5.0.1",
+    "body-parser": "^1.16.1",
+    "is-property": "^1.0.2"
+  }
+}
