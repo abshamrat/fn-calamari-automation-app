@@ -23,14 +23,16 @@
   },
   "homepage": "",
   "devDependencies": {
-    "electron": "latest",
+    "electron": "^2.0.11",
     "electron-builder": "^20.15.1",
     "electron-installer-debian": "^0.8.1",
-    "electron-packager": "^8.5.2"
+    "electron-packager": "^8.5.2",
+    "shutdown-hook": "^1.1.1"
   },
   "dependencies": {
     "auto-launch": "^5.0.1",
     "body-parser": "^1.16.1",
-    "is-property": "^1.0.2"
+    "is-property": "^1.0.2",
+    "simple-node-logger": "^0.93.40"
   }
 }

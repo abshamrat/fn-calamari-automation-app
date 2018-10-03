@@ -3,10 +3,23 @@ const electron = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
+const ShutdownHook = require('shutdown-hook')
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 
+let shutdownHook = new ShutdownHook();
+
 const Calamari = require(path.join(__dirname, '/scripts/calamari.js'));
+
+
+// create a rolling file logger based on date/time that fires process events
+const opts = {
+  errorEventName:'error',
+      logDirectory:'./logfiles', // NOTE: folder must exist and be writable...
+      fileNamePattern:'roll-<DATE>.log',
+      dateFormat:'YYYY.MM.DD'
+};
+const log = require('simple-node-logger').createRollingFileLogger( opts );
 
 const AppLauncher = new AutoLaunch({
   name: 'fn-calamari-app'
@@ -57,6 +70,7 @@ class AppWindow{
     }catch(ex){}
   }
   init(){
+    shutdownHook.register();
     AppLauncher.enable();
     AppLauncher.isEnabled()
     .then(function(isEnabled){
@@ -77,6 +91,7 @@ class AppWindow{
       if(this.mainWindow === undefined || from)
         this.calamari.setReady(true);
       this.calamari.showOnly();
+      appWindow.hookListener();
       return;
     }
     this.calamari.setEmail(useremail);
@@ -112,6 +127,15 @@ class AppWindow{
   hide(){
     this.mainWindow.hide();
   }
+  hookListener() {
+    shutdownHook.on('ShutdownStarted', (e) => {console.log('it has began');log.info("it has began");appWindow.calamari.shuttingDown();});
+    shutdownHook.on('ComponentShutdown', (e) => {console.log('it has component');log.info("it has component");});
+    shutdownHook.on('ShutdownEnded', (e) => {console.log('it has ended');log.info("it has ended");});
+  }
+  // quitting() {
+  //   console.log("quitting");
+  //   appWindow.calamari.shuttingDown();
+  // }
 
 }
 app.on('ready', function() {
@@ -121,11 +145,16 @@ app.on('ready', function() {
 app.on('hide', function() {
   console.log("Working-hide");
 })
+// Some APIs can only be used after this event occurs.
+// app.on('before-quit', function() {
+//   appObject.quitting();
+// });
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
+  console.log("window-all-closed");
   if (process.platform !== 'darwin') {
     app.quit()
   }

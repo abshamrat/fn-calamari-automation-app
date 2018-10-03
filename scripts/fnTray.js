@@ -46,6 +46,7 @@ class FNTray {
     , {
       label: 'Quit',
       click() {
+        menuTray.calamari.isPressedQuit = true;
         app.quit();
         
       }

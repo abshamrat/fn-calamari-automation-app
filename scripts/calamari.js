@@ -17,6 +17,7 @@ const FNTray = require(path.join(__dirname,'/fnTray.js'));
 class Calamari {
   constructor(email, window){
     this.isReady = false;
+    this.isPressedQuit = false;
     this.useremail = email;
     this.fnTray = new FNTray(window);
     this.initVars();
@@ -69,13 +70,18 @@ class Calamari {
       this.prevemail = this.useremail;
       this.fnTray.tray.setImage(this.fnTray.calamariWhite);
       request(this.options, (error, response, body) => {
+        
         if (!error && response.statusCode == 200) {
           this.decide(JSON.parse(body), type);        
           return;
-        }else{
+        }else if(!error && response.statusCode == 400){
           this.visibleClockIn();
           this.fnTray.tray.setImage(this.fnTray.calamariRed);
           this.showNotification("error");
+        }else{
+          this.visibleClockIn();
+          this.fnTray.tray.setImage(this.fnTray.calamariRed);
+          this.showNotification("internetError");
         }
       })
     }
@@ -117,14 +123,25 @@ class Calamari {
     if(messageType === 'error')
     {
       message.title = "ERROR!";
-      message.body = "Employee email is not valid. Please check your settings.";
-    }else
+      message.body = "Employee email is not valid. Please check your email from settings.";
+    }
+    else if(messageType === 'internetError')
+    {
+      message.title = "No internet";
+      message.body = "Checking the network cables, modem, and router. Please try again";
+    }
+    else
     {
       message.title = messageType.toUpperCase();
       message.body = "You are successfully "+messageType.replace("clock","Clocked ");
     }
     const notification = new Notification(message);
     notification.show();
+  }
+  shuttingDown() {
+    console.log("shuttingDown");
+    this.makeRequest('clockOut');
+    console.log("clockOut");
   }
 }
 
