@@ -5,7 +5,7 @@ const path = require('path');
 const baseUrl = 'https://fieldnation.calamari.io/api/clockin/';
 const auth = {
   'user': 'api',
-  'pass': 'ApBcE6iwqaDjhoIUUNEE3XgFYRlxWgkQ76geL43OAII1IVWMgWEuxqgLlHnJt'
+  'pass': 'youpass'
 };
 const urls = {
   'currentStatus' : baseUrl+'shift/status/v1/get-current',
